@@ -57,7 +57,7 @@
             document.getElementById('chat-log').innerHTML += `<p>User: ${userInput}</p>`;
 
             // Replace 'your_openai_api_key_here' with your actual OpenAI API key
-            const openaiApiKey = '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';
+            const openaiApiKey = '';
             getBotResponse(userInput, openaiApiKey)
                 .then(botResponse => {
                     document.getElementById('chat-log').innerHTML += `<p>Chatbot: ${botResponse}</p>`;
@@ -70,3 +70,4 @@
     </script>
 </body>
 </html>
+
