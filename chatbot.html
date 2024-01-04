@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Chatbot</title>
+    <style>
+        /* Your CSS styles here */
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-log"></div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function getBotResponse(userInput, apiKey) {
+            const openaiEndpoint = 'https://api.openai.com/v1/engines/text-davinci-002/completions';
+
+            try {
+                const response = await fetch(openaiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`,
+                    },
+                    body: JSON.stringify({
+                        prompt: `how can i help you?`,
+                        max_tokens: 50,
+                        temperature: 0.3,
+                        stop: ['OpenAI:'],
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.choices && data.choices.length > 0 && data.choices[0].text.trim() !== '') {
+                    const assistantResponse = data.choices[0].text.trim();
+                    return assistantResponse;
+                } else {
+                    throw new Error('Empty response from OpenAI.');
+                }
+            } catch (error) {
+                console.error('Error fetching bot response:', error);
+                throw error;
+            }
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            document.getElementById('chat-log').innerHTML += `<p>User: ${userInput}</p>`;
+
+            // Replace 'your_openai_api_key_here' with your actual OpenAI API key
+            const openaiApiKey = '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';
+            getBotResponse(userInput, openaiApiKey)
+                .then(botResponse => {
+                    document.getElementById('chat-log').innerHTML += `<p>Chatbot: ${botResponse}</p>`;
+                    document.getElementById('user-input').value = '';
+                })
+                .catch(error => {
+                    document.getElementById('chat-log').innerHTML += `<p>Error: ${error.message}</p>`;
+                });
+        }
+    </script>
+</body>
+</html>
